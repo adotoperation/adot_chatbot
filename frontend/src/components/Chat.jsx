@@ -26,7 +26,8 @@ const Chat = ({ user, onLogout }) => {
     setLoading(true);
 
     try {
-      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      // In production, the backend is prefixed with /_/backend as per the service config.
+      const apiBase = import.meta.env.VITE_API_URL || '/_/backend';
       const response = await axios.post(`${apiBase}/api/chat`, { message: userMsg });
       setMessages(prev => [...prev, { role: 'bot', content: response.data.reply }]);
     } catch (err) {
@@ -54,7 +55,7 @@ const Chat = ({ user, onLogout }) => {
           <button 
             onClick={async () => {
               try {
-                const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                const apiBase = import.meta.env.VITE_API_URL || '/_/backend';
                 const res = await axios.post(`${apiBase}/api/reload_docs`);
                 alert(res.data.message);
               } catch (e) {

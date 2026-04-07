@@ -99,6 +99,7 @@ def initialize_rag():
         print("="*40 + "\n")
 
 @app.route('/reload_docs', methods=['POST'])
+@app.route('/api/reload_docs', methods=['POST'])
 def reload_docs():
     success = initialize_rag()
     if success:
@@ -107,6 +108,7 @@ def reload_docs():
         return jsonify({"success": False, "message": "문서를 찾을 수 없습니다. api/docs 폴더를 확인하세요."}), 404
 
 @app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     try:
         data = request.json
@@ -123,6 +125,7 @@ def login():
         return jsonify({"success": False, "message": f"로그인 처리 중 오류: {str(e)}"}), 500
 
 @app.route('/chat', methods=['POST'])
+@app.route('/api/chat', methods=['POST'])
 def chat():
     if not GOOGLE_API_KEY:
         return jsonify({"reply": "API Key가 구성되지 않았습니다. .env 파일을 확인해주세요."}), 500

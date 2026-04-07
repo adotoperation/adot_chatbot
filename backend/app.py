@@ -193,8 +193,8 @@ def chat():
             행정·인사 전문가 답변:"""
             
             PROMPT = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
-            # Using flash-1.5 for better Korean and following instructions
-            llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=GOOGLE_API_KEY, temperature=0.1)
+            # Upgraded to Gemini 2.0 Flash for enhanced performance and instruction following
+            llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", google_api_key=GOOGLE_API_KEY, temperature=0)
             
             chain = RetrievalQA.from_chain_type(
                 llm=llm, 
@@ -216,8 +216,8 @@ def chat():
             
         # 2. Second choice: Fallback to pure Gemini
         else:
-            print(f"[Chat] RAG unavailable. Falling back to Gemini: {message[:30]}...")
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            print(f"[Chat] RAG unavailable. Falling back to Gemini 2.0 Flash: {message[:30]}...")
+            model = genai.GenerativeModel('gemini-2.0-flash')
             fallback_prompt = f"""
             당신은 '디쉐어(D-Share) 에이닷 영어학원' 본사의 행정 및 인사 업무 지원 전문가입니다.
             현재 등록된 매뉴얼 파일이 없습니다. 일반적인 지식으로 답변하되, 

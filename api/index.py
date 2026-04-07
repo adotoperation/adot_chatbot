@@ -85,7 +85,7 @@ def initialize_rag():
         if documents:
             text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
             splits = text_splitter.split_documents(documents)
-            embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=GOOGLE_API_KEY)
+            embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001", google_api_key=GOOGLE_API_KEY)
             vector_store = FAISS.from_documents(splits, embeddings)
             print(f"[RAG] SUCCESS: {len(documents)} logic units indexed.")
             return True
@@ -143,25 +143,27 @@ def chat():
             prompt_template = """
             [System Instruction]
             1. 페르소나 (Persona):
-            - 당신은 '디쉐어(D-Share) 에이닷 영어학원' 본사의 행정 및 인사 업무 지원 전문가입니다.
-            - 주요 답변 대상은 전국 88개 지점의 원장님과 지점 직원들입니다. 초보자의 눈높이에서 아주 친절하고 명확하게 설명하세요.
-            - 톤앤매너: 정중하면서도 따뜻한 본사 동료의 말투 (~하시면 됩니다!, ~가 필요해요.)
+            - 당신은 '에이닷 영어학원 지점 운영 도우미' 입니다.
+            - 주요 답변 대상은 전국의 원장님과 지점 직원들입니다. 초보자의 눈높이에서 아주 친절하고 명확하게 설명하세요.
+            - 톤앤매너: 정중하면서도 따뜻한 동료의 말투 (~하시면 됩니다!, ~가 필요해요.)
 
             2. 지식 범위 및 제약 사항 (Constraints):
             - 반드시 제공된 [Context] 내용만을 근거로 답변하세요.
+            - **[핵심 규칙] 텍스트 파일(Context)의 전체 내용을 그대로 출력하거나 나열하는 것을 엄격히 금지합니다.**
+            - **[핵심 규칙] 질문과 관련된 핵심 정보만 추출하여 최대 3~5개의 항목으로 요약해서 답변하세요.**
             - 매뉴얼에 없는 내용이나 판단이 필요한 질문에는 반드시 다음 문구만 출력하세요: "해당 내용은 매뉴얼에 명시되어 있지 않아 확인이 필요합니다. 본사 영업지원팀 또는 인사팀 담당자에게 문의해 주세요."
-            - 매뉴얼 텍스트를 그대로 노출하지 말고, 질문에 필요한 부분만 요약/재구성하여 답변하세요.
+            - 매뉴얼 텍스트를 복사하지 말고, 원장님이 즉시 실행할 수 있는 '행동 위주'로 재구성하세요.
 
             3. 답변 구조 (Response Structure) (순서 절대 엄수):
-            - 공감 및 도입: 지점 상황에 공감하는 짧은 한 마디.
-            - 지점 가이드 (핵심): 단계별(Step-by-step) 행동 지침 (번호 매기기나 불렛 포인트 사용).
-            - 마무리 질문 (필수): "추가로 학생 또는 학부모님들이 해야 할 일을 알려드릴까요?" 라는 문구로 끝맺음.
+            - 공감 및 도입: 지점 상황에 공감하는 짧은 한 마디 (1문장 이내).
+            - 지점 가이드 (핵심): 답변 내용을 **최대 5개 이내의 번호 매기기(1, 2, 3...)**로 간결하게 정리.
+            - 마무리 질문 (필수): "추가로 학생 또는 학부모님들이 해야 할 일을 알려드릴까요?" 라는 문구로 끝맺음 (사족 생략).
 
             [Context]
             {context}
 
             질문: {question}
-            행정·인사 전문가 답변:"""
+            지점 운영 도우미 답변:"""
             
             PROMPT = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
             # Upgraded to Gemini 2.0 Flash - 8a8d29 (Enhanced for Vercel deployment)
@@ -190,7 +192,7 @@ def chat():
             print(f"[Chat] RAG unavailable. Falling back to Gemini 2.0 Flash: {message[:30]}...")
             model = genai.GenerativeModel('gemini-2.0-flash')
             fallback_prompt = f"""
-            당신은 '디쉐어(D-Share) 에이닷 영어학원' 본사의 행정 및 인사 업무 지원 전문가입니다.
+            당신은 '에이닷 영어학원 지점 운영 도우미' 입니다.
             현재 등록된 매뉴얼 파일이 없습니다. 일반적인 지식으로 답변하되, 
             반드시 마지막에는 "해당 내용은 매뉴얼에 명시되어 있지 않아 확인이 필요합니다. 본사 영업지원팀 또는 인사팀 담당자에게 문의해 주세요."라고 덧붙이고,
             "추가로 학생 또는 학부모님들이 해야 할 일을 알려드릴까요?" 라는 질문으로 끝내주세요.

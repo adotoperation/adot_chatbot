@@ -32,8 +32,8 @@ const Login = ({ onLogin }) => {
   return (
     <div className="glass-card fade-in" style={{ padding: '3rem', width: '400px', textAlign: 'center' }}>
       <div style={{ marginBottom: '2.5rem' }}>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '0.2rem', background: 'var(--primary-gradient)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>A.dot</h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', fontWeight: '500' }}>행정·인사 업무 지원 시스템</p>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '0.2rem', color: 'var(--primary)' }}>A.dot</h1>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', fontWeight: '500' }}>에이닷 지점 운영 도우미 시스템</p>
       </div>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -46,7 +46,7 @@ const Login = ({ onLogin }) => {
             onChange={(e) => setUsername(e.target.value)}
             style={{
               width: '100%', padding: '0.8rem 1rem 0.8rem 3rem', borderRadius: '12px',
-              border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none'
+              border: '1px solid var(--glass-border)', background: 'white', color: 'var(--text-primary)', outline: 'none'
             }}
             required
           />
@@ -61,7 +61,7 @@ const Login = ({ onLogin }) => {
             onChange={(e) => setPassword(e.target.value)}
             style={{
               width: '100%', padding: '0.8rem 1rem 0.8rem 3rem', borderRadius: '12px',
-              border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none'
+              border: '1px solid var(--glass-border)', background: 'white', color: 'var(--text-primary)', outline: 'none'
             }}
             required
           />
@@ -86,10 +86,10 @@ const Login = ({ onLogin }) => {
           style={{
             padding: '1.2rem', borderRadius: '16px', border: 'none', background: 'var(--primary-gradient)',
             color: 'white', fontWeight: '700', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem',
-            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.4)'
+            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.05)'
           }}
-          onMouseOver={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 20px 25px -5px rgba(0, 242, 254, 0.2)'; }}
-          onMouseOut={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.4)'; }}
+          onMouseOver={(e) => { e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.1)'; }}
+          onMouseOut={(e) => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.05)'; }}
         >
           {loading ? <Loader2 className="animate-spin" size={20} /> : <LogIn size={20} />}
           시스템 접속

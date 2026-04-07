@@ -4,7 +4,7 @@ import { Send, LogOut, Bot, User, Loader2 } from 'lucide-react';
 
 const Chat = ({ user, onLogout }) => {
   const [messages, setMessages] = useState([
-    { role: 'bot', content: `안녕하세요, 원장님! '디쉐어 에이닷 영어학원' 본사 행정/인사팀 동료입니다.\n전국 지점의 원장님과 직원분들을 위해 무엇을 도와드릴까요?\n\n궁금하신 행정 또는 인사 업무에 대해 질문해 주세요!` }
+    { role: 'bot', content: `안녕하세요, 에이닷 운영 도우미입니다.\n무엇을 도와드릴까요?` }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -47,8 +47,8 @@ const Chat = ({ user, onLogout }) => {
             <Bot color="white" size={24} />
           </div>
           <div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '800', background: 'var(--primary-gradient)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>본사 행정·인사 전문가</h2>
-            <p style={{ fontSize: '0.8rem', color: 'var(--accent)', fontWeight: '600' }}>● 전국 88개 지점 실시간 지원 중</p>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-primary)' }}>에이닷 지점 운영 도우미</h2>
+            <p style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: '600' }}>● 전국 지점 실시간 지원 중</p>
           </div>
         </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -62,7 +62,7 @@ const Chat = ({ user, onLogout }) => {
                 alert('문서 로드 실패: ' + (e.response?.data?.message || '서버 오류'));
               }
             }}
-            style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid var(--glass-border)', color: 'white', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem' }}
+            style={{ background: 'white', border: '1px solid var(--glass-border)', color: 'var(--text-primary)', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}
           >
             문서 새로고침
           </button>
@@ -77,31 +77,34 @@ const Chat = ({ user, onLogout }) => {
         {messages.map((msg, i) => (
           <div key={i} style={{ display: 'flex', gap: '1rem', alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '80%' }}>
             {msg.role === 'bot' && (
-              <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0 }}>
-                <Bot size={18} />
+              <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0, border: '1px solid var(--glass-border)' }}>
+                <Bot size={18} color="var(--primary)" />
               </div>
             )}
             <div style={{
-              padding: '1rem', borderRadius: '18px', background: msg.role === 'user' ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
-              border: msg.role === 'user' ? 'none' : '1px solid var(--glass-border)',
-              color: 'white', fontSize: '0.95rem', lineHeight: '1.6', whiteSpace: 'pre-wrap', textAlign: 'left'
+              padding: '1rem', borderRadius: '18px', 
+              background: msg.role === 'user' ? 'var(--primary)' : 'var(--bot-msg)',
+              border: '1px solid var(--glass-border)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+              color: msg.role === 'user' ? 'white' : 'var(--text-primary)', 
+              fontSize: '0.95rem', lineHeight: '1.6', whiteSpace: 'pre-wrap', textAlign: 'left'
             }}>
               {msg.content}
             </div>
             {msg.role === 'user' && (
               <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--accent)', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0 }}>
-                <User size={18} color="black" />
+                <User size={18} color="white" />
               </div>
             )}
           </div>
         ))}
         {loading && (
           <div style={{ display: 'flex', gap: '1rem', alignSelf: 'flex-start' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <Bot size={18} />
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid var(--glass-border)' }}>
+              <Bot size={18} color="var(--primary)" />
             </div>
-            <div style={{ padding: '1rem', borderRadius: '18px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)' }}>
-              <Loader2 className="animate-spin" size={18} />
+            <div style={{ padding: '1rem', borderRadius: '18px', background: 'var(--bot-msg)', border: '1px solid var(--glass-border)' }}>
+              <Loader2 className="animate-spin" size={18} color="var(--primary)" />
             </div>
           </div>
         )}
@@ -116,7 +119,7 @@ const Chat = ({ user, onLogout }) => {
           placeholder="질문을 입력하세요..."
           style={{
             flex: 1, padding: '1rem 1.5rem', borderRadius: '12px', border: '1px solid var(--glass-border)',
-            background: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none'
+            background: 'white', color: 'var(--text-primary)', outline: 'none', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
           }}
         />
         <button

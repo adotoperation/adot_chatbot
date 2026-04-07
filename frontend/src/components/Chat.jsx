@@ -52,7 +52,7 @@ const Chat = ({ user, onLogout }) => {
           </div>
         </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <button 
+          <button
             onClick={async () => {
               try {
                 const apiBase = import.meta.env.VITE_API_URL || '/api';
@@ -61,7 +61,7 @@ const Chat = ({ user, onLogout }) => {
               } catch (e) {
                 alert('문서 로드 실패: ' + (e.response?.data?.message || '서버 오류'));
               }
-            }} 
+            }}
             style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid var(--glass-border)', color: 'white', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem' }}
           >
             문서 새로고침

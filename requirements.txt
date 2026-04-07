@@ -1,0 +1,14 @@
+flask
+flask-cors
+google-generativeai
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+langchain
+langchain-google-genai
+langchain-community
+pypdf
+faiss-cpu
+python-dotenv
+pandas
+requests

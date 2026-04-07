@@ -40,52 +40,57 @@ vector_store = None
 
 def initialize_rag():
     global vector_store
+    if vector_store is not None:
+        return True
+        
     print("\n" + "="*40)
     print("[RAG] Initializing Knowledge Base...")
     try:
         documents = []
         doc_path = os.path.join(os.path.dirname(__file__), 'docs')
         if not os.path.exists(doc_path):
-            os.makedirs(doc_path)
-            print(f"[RAG] Created directory: {doc_path}")
-        
-        pdf_files = [f for f in os.listdir(doc_path) if f.endswith('.pdf')]
-        txt_files = [f for f in os.listdir(doc_path) if f.endswith('.txt')]
-        print(f"[RAG] Found PDF files: {pdf_files}")
-        print(f"[RAG] Found Text files: {txt_files}")
-        
-        for file in pdf_files:
             try:
-                loader = PyPDFLoader(os.path.join(doc_path, file))
-                documents.extend(loader.load())
-                print(f"[RAG] Loaded PDF document: {file}")
+                os.makedirs(doc_path)
+                print(f"[RAG] Created directory: {doc_path}")
             except Exception as e:
-                print(f"[RAG] Failed to load PDF {file}: {e}")
-
-        for file in txt_files:
-            try:
-                loader = TextLoader(os.path.join(doc_path, file), encoding='utf-8')
-                documents.extend(loader.load())
-                print(f"[RAG] Loaded Text document: {file}")
-            except Exception as e:
-                # Retry with cp949 for Windows text files if utf-8 fails
+                print(f"[RAG] Could not create directory: {e}")
+        
+        if os.path.exists(doc_path):
+            pdf_files = [f for f in os.listdir(doc_path) if f.endswith('.pdf')]
+            txt_files = [f for f in os.listdir(doc_path) if f.endswith('.txt')]
+            print(f"[RAG] Found PDF files: {pdf_files}")
+            print(f"[RAG] Found Text files: {txt_files}")
+            
+            for file in pdf_files:
                 try:
-                    loader = TextLoader(os.path.join(doc_path, file), encoding='cp949')
+                    loader = PyPDFLoader(os.path.join(doc_path, file))
                     documents.extend(loader.load())
-                    print(f"[RAG] Loaded Text document (cp949): {file}")
-                except:
-                    print(f"[RAG] Failed to load Text {file}: {e}")
+                    print(f"[RAG] Loaded PDF document: {file}")
+                except Exception as e:
+                    print(f"[RAG] Failed to load PDF {file}: {e}")
+
+            for file in txt_files:
+                try:
+                    loader = TextLoader(os.path.join(doc_path, file), encoding='utf-8')
+                    documents.extend(loader.load())
+                    print(f"[RAG] Loaded Text document: {file}")
+                except Exception as e:
+                    try:
+                        loader = TextLoader(os.path.join(doc_path, file), encoding='cp949')
+                        documents.extend(loader.load())
+                        print(f"[RAG] Loaded Text document (cp949): {file}")
+                    except:
+                        print(f"[RAG] Failed to load Text {file}: {e}")
         
         if documents:
             text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
             splits = text_splitter.split_documents(documents)
             embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=GOOGLE_API_KEY)
             vector_store = FAISS.from_documents(splits, embeddings)
-            print(f"[RAG] SUCCESS: {len(pdf_files) + len(txt_files)} files indexed.")
+            print(f"[RAG] SUCCESS: {len(documents)} logic units indexed.")
             return True
         else:
-            print("[RAG] CRITICAL: No files found in 'backend/docs/'.")
-            print("[RAG] Please place PDF or TXT manuals in 'backend/docs/' and restart.")
+            print("[RAG] CRITICAL: No files found in 'api/docs/'.")
             return False
     except Exception as e:
         print(f"[RAG] ERROR during initialization: {e}")
@@ -121,6 +126,10 @@ def login():
 def chat():
     if not GOOGLE_API_KEY:
         return jsonify({"reply": "API Key가 구성되지 않았습니다. .env 파일을 확인해주세요."}), 500
+        
+    # Lazy initialization for Vercel serverless environment
+    if vector_store is None:
+        initialize_rag()
         
     data = request.json
     message = data.get('message')

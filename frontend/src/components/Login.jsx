@@ -15,8 +15,8 @@ const Login = ({ onLogin }) => {
     setError('');
 
     try {
-      const apiBase = import.meta.env.VITE_API_URL || '/_/backend';
-      const response = await axios.post(`${apiBase}/api/login`, { username, password });
+      const apiBase = import.meta.env.VITE_API_URL || '/api';
+      const response = await axios.post(`${apiBase}/login`, { username, password });
       if (response.data.success) {
         onLogin({ username, remember });
       }

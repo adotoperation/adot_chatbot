@@ -27,8 +27,8 @@ const Chat = ({ user, onLogout }) => {
 
     try {
       // In production, the backend is prefixed with /_/backend as per the service config.
-      const apiBase = import.meta.env.VITE_API_URL || '/_/backend';
-      const response = await axios.post(`${apiBase}/api/chat`, { message: userMsg });
+      const apiBase = import.meta.env.VITE_API_URL || '/api';
+      const response = await axios.post(`${apiBase}/chat`, { message: userMsg });
       setMessages(prev => [...prev, { role: 'bot', content: response.data.reply }]);
     } catch (err) {
       const errorMsg = err.response?.data?.reply || '죄송합니다. 서버와 연결할 수 없거나 오류가 발생했습니다.';
@@ -55,8 +55,8 @@ const Chat = ({ user, onLogout }) => {
           <button 
             onClick={async () => {
               try {
-                const apiBase = import.meta.env.VITE_API_URL || '/_/backend';
-                const res = await axios.post(`${apiBase}/api/reload_docs`);
+                const apiBase = import.meta.env.VITE_API_URL || '/api';
+                const res = await axios.post(`${apiBase}/reload_docs`);
                 alert(res.data.message);
               } catch (e) {
                 alert('문서 로드 실패: ' + (e.response?.data?.message || '서버 오류'));

@@ -31,8 +31,6 @@ CORS(app)
 
 # Configuration
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-SHEET_URL = os.getenv("GOOGLE_SHEET_URL")
-FOLDER_ID = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
 
 if GOOGLE_API_KEY:
     genai.configure(api_key=GOOGLE_API_KEY)
@@ -95,67 +93,31 @@ def initialize_rag():
     finally:
         print("="*40 + "\n")
 
-@app.route('/api/reload_docs', methods=['POST'])
+@app.route('/reload_docs', methods=['POST'])
 def reload_docs():
     success = initialize_rag()
     if success:
         return jsonify({"success": True, "message": "문서가 성공적으로 로드되었습니다."})
     else:
-        return jsonify({"success": False, "message": "문서를 찾을 수 없습니다. backend/docs 폴더를 확인하세요."}), 404
+        return jsonify({"success": False, "message": "문서를 찾을 수 없습니다. api/docs 폴더를 확인하세요."}), 404
 
-@app.route('/api/login', methods=['POST'])
+@app.route('/login', methods=['POST'])
 def login():
     try:
         data = request.json
-        # Normalize input: trim and lowercase ID
         input_user = str(data.get('username', '')).strip().lower()
         input_pass = str(data.get('password', '')).strip()
         
-        print(f"[Login] Attempt received for user: '{input_user}'")
+        print(f"[Login] Bypass login attempt for user: '{input_user}'")
         
-        # 1. Fetch CSV content from Google Sheet
-        response = requests.get(SHEET_URL, timeout=10)
-        if response.status_code != 200:
-            print(f"[Login] Error: Cannot access Google Sheet (Status {response.status_code})")
-            return jsonify({"success": False, "message": f"시트 접근 실패(Status: {response.status_code})"}), 500
-            
-        # 2. Convert to DataFrame
-        try:
-            # Use low_memory=False to avoid dtype warnings, and index_col=False for safety
-            df = pd.read_csv(io.StringIO(response.text), encoding='utf-8-sig', dtype=str)
-        except:
-            df = pd.read_csv(io.StringIO(response.text), encoding='cp949', dtype=str)
-            
-        # 3. Clean Sheet data
-        # Ensure we have at least 2 columns
-        if df.shape[1] < 2:
-            print(f"[Login] Error: Sheet only has {df.shape[1]} columns. Expected at least 2.")
-            return jsonify({"success": False, "message": "시트 형식이 잘못되었습니다 (컬럼 부족)."}), 500
-
-        # Process ID column (0) and Password column (1)
-        # We already read them as dtype=str, so we just clean them
-        df.iloc[:, 0] = df.iloc[:, 0].fillna('').str.strip().str.lower()
-        df.iloc[:, 1] = df.iloc[:, 1].fillna('').str.strip()
-        
-        # 4. Authenticate
-        match = df[(df.iloc[:, 0] == input_user) & (df.iloc[:, 1] == input_pass)]
-        
-        if not match.empty:
-            print(f"[Login] SUCCESS: '{input_user}' authenticated.")
-            return jsonify({"success": True})
-        
-        print(f"[Login] FAILED: Credentials do not match.")
-        # Debugging log for the user in console
-        print(f"[Login] Sheet Columns detected: {list(df.columns)}")
-        print(f"[Login] First 2 rows in sheet: {df.iloc[:2, :2].to_dict('records')}")
-        
-        return jsonify({"success": False, "message": "아이디 또는 비밀번호가 불일치합니다."}), 401
+        # Simplified: Allow any login while Google Sheets is disabled
+        return jsonify({"success": True})
         
     except Exception as e:
         print(f"[Login] System Error: {e}")
         return jsonify({"success": False, "message": f"로그인 처리 중 오류: {str(e)}"}), 500
 
-@app.route('/api/chat', methods=['POST'])
+@app.route('/chat', methods=['POST'])
 def chat():
     if not GOOGLE_API_KEY:
         return jsonify({"reply": "API Key가 구성되지 않았습니다. .env 파일을 확인해주세요."}), 500
@@ -193,7 +155,7 @@ def chat():
             행정·인사 전문가 답변:"""
             
             PROMPT = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
-            # Upgraded to Gemini 2.0 Flash for enhanced performance and instruction following
+            # Upgraded to Gemini 2.0 Flash - 8a8d29 (Enhanced for Vercel deployment)
             llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", google_api_key=GOOGLE_API_KEY, temperature=0)
             
             chain = RetrievalQA.from_chain_type(

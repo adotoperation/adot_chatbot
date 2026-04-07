@@ -1,6 +1,6 @@
 @echo off
 echo [Adot Chatbot] Starting Backend...
-start cmd /k "cd backend && python app.py"
+start cmd /k "cd api && python index.py"
 
 echo [Adot Chatbot] Starting Frontend...
 start cmd /k "cd frontend && npm run dev"

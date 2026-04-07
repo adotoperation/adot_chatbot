@@ -4,12 +4,13 @@ google-generativeai
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
-langchain>=0.2.0
-langchain-community>=0.2.0
-langchain-google-genai>=1.0.10
+langchain==0.2.16
+langchain-community==0.2.16
+langchain-google-genai==1.0.10
+langchain-core==0.2.43
 langchain-text-splitters
 pypdf
-faiss-cpu==1.7.4
+faiss-cpu
 numpy<2.0.0
 python-dotenv
 pandas

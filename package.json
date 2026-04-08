@@ -1,0 +1,10 @@
+{
+  "name": "adot-chatbot",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "powershell -ExecutionPolicy Bypass -File run_app.ps1",
+    "start": "npm run dev",
+    "build": "cd frontend && npm install && npm run build"
+  }
+}

@@ -1,0 +1,85 @@
+:root {
+  --primary: #4FC3F7;
+  --primary-gradient: linear-gradient(135deg, #B3E5FC 0%, #81D4FA 100%);
+  --bg-light: #F0F4F8;
+  --card-bg: rgba(255, 255, 255, 0.98);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --text-primary: #263238;
+  --text-secondary: #546E7A;
+  --accent: #FFA726;
+  --error: #FF5252;
+  --user-msg: #DCF2FD;
+  --bot-msg: #FFFFFF;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background-color: var(--bg-light);
+  color: var(--text-primary);
+  /* overflow: hidden; 삭제하여 일반적인 스크롤 허용 */
+  min-height: 100vh;
+  width: 100vw;
+}
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+  position: relative;
+  overflow-y: auto; /* 내용이 길어질 경우 세로 스크롤 허용 */
+  padding: 40px 20px; /* 상하좌우 여백 추가하여 짤림 방지 */
+}
+
+.app-container::before {
+  content: '';
+  position: absolute;
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, #B2EBF2 0%, transparent 70%);
+  top: -150px;
+  right: -150px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.app-container::after {
+  content: '';
+  position: absolute;
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, #F8BBD0 0%, transparent 70%);
+  bottom: -150px;
+  left: -150px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Glassmorphism Card */
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  max-width: 100%; /* 너비 초과 방지 */
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
